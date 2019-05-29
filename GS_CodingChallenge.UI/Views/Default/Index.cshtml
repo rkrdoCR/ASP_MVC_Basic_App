@@ -1,0 +1,68 @@
+﻿
+<h1>User - Projects</h1>
+
+<div class="row">
+    <div class="span6" style="float: none; margin: 0 auto;">
+        <select id="users" class="form-control"></select>
+    </div>
+</div>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<div class="row">
+    <div class="span6" style="float: none; margin: 0 auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Project Id</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">Time to Start</th>
+                    <th scope="col">End Date</th>
+                    <th scope="col">Credits</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody id="t_body"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            LoadUsersSelector();
+        });
+
+        function LoadUsersSelector() {
+            $("#users").empty();
+            $("#users").append($("<option />").val(0).text(" ------ ------ "));
+            $.getJSON('@Url.Action("LoadUsers", "Default")', null,
+                function (data) {
+                    $.each(data, function () {
+                        $("#users").append($("<option />").val(this.Id).text(this.FirstName + " " + this.LastName));
+                    });
+                });
+        }
+
+        $("#users").on('change', function () {
+            $("#t_body").empty();
+            $.getJSON('@Url.Action("LoadUserProjects", "Default")', { id: this.value },
+                function (data) {
+                    var tableHTML = '';
+                        $.each(data, function (i, item) {
+                            tableHTML += '<tr><td>' + item.Id + '</td><td>' + parseJsonDate(item.StartDate) + '</td><td>' + item.TimeToStart + '</td><td>' + parseJsonDate(item.EndDate) + '</td><td>' + item.Credits + '</td><td>' + item.IsActive + '</td></tr>';
+                        });
+                    $('#t_body').append(tableHTML);
+                });
+        });
+
+        function parseJsonDate(jsonDateString) {
+            return new Date(parseInt(jsonDateString.replace('/Date(', ''))).toISOString().slice(0, 10);
+        }
+    </script>
+
+}
