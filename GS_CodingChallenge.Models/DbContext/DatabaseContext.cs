@@ -1,6 +1,6 @@
 ﻿using System.Data.Entity;
 
-namespace GS_CodingChallenge
+namespace GS_CodingChallenge.Models
 {
     public class DatabaseContext : DbContext
     {
@@ -8,7 +8,7 @@ namespace GS_CodingChallenge
             : base("DefaultConnection")
         {
             Configuration.LazyLoadingEnabled = false;
-            Database.SetInitializer<DatabaseContext>(new DatabaseInitializer());
+            //Database.SetInitializer<DatabaseContext>(new DatabaseInitializer());
         }
 
         protected override void OnModelCreating(DbModelBuilder builder)

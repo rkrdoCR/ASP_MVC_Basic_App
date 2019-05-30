@@ -31,7 +31,7 @@
 </div>
 
 @section Scripts{
-
+    @*TODO: move this to its own js file*@
     <script type="text/javascript">
         $(document).ready(function () {
             LoadUsersSelector();
@@ -54,7 +54,7 @@
                 function (data) {
                     var tableHTML = '';
                         $.each(data, function (i, item) {
-                            tableHTML += '<tr><td>' + item.Id + '</td><td>' + parseJsonDate(item.StartDate) + '</td><td>' + item.TimeToStart + '</td><td>' + parseJsonDate(item.EndDate) + '</td><td>' + item.Credits + '</td><td>' + item.IsActive + '</td></tr>';
+                            tableHTML += '<tr><td>' + item.ProjectId + '</td><td>' + parseJsonDate(item.StartDate) + '</td><td>' + item.TimeToStart + '</td><td>' + parseJsonDate(item.EndDate) + '</td><td>' + item.Credits + '</td><td>' + item.IsActive + '</td></tr>';
                         });
                     $('#t_body').append(tableHTML);
                 });

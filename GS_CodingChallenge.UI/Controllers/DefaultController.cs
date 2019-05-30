@@ -1,12 +1,19 @@
-﻿using System;
-using System.Linq;
+﻿using GS_CodingChallenge.Services;
 using System.Web.Mvc;
 
 namespace GS_CodingChallenge
 {
+    //TODO: Implement request-response pattern
+
     public class DefaultController : Controller
     {
-        // GET: Default
+        private IDefaultControllerService _defaultControllerService;
+
+        public DefaultController(IDefaultControllerService defaultControllerService)
+        {
+            _defaultControllerService = defaultControllerService;
+        }
+
         public ActionResult Index()
         {
             return View();
@@ -15,11 +22,7 @@ namespace GS_CodingChallenge
         [HttpGet]
         public virtual JsonResult LoadUsers()
         {
-            object query;
-            using (var context = new DatabaseContext())
-            {
-                 query = context.Users.ToList(); 
-            }
+            var query = _defaultControllerService.GetUsers();
 
             return Json(query, JsonRequestBehavior.AllowGet);
         }
@@ -27,43 +30,9 @@ namespace GS_CodingChallenge
         [HttpGet]
         public virtual JsonResult LoadUserProjects(int id)
         {
-            object query = null;
-            using (var context = new DatabaseContext())
-            {
-                var p_query = context.Projects
-                    .Where(p => p.UserProjects
-                    .Any(up => up.UserId == id))
-                    .ToList();
-
-                var up_query = context.UserProjects
-                    .Where(up => up.UserId == id).ToList();
-
-                query = from p in p_query
-                        join up in up_query on p.Id equals up.ProjectId
-                        where up.UserId == id
-                        select new {
-                            p.Id,
-                            p.StartDate,
-                            TimeToStart = GetValue(p.StartDate, up.AssignedDate),
-                            p.EndDate,
-                            p.Credits,
-                            up.IsActive
-                        };
-            }
+            var query = _defaultControllerService.GetUserProjects(id);
 
             return Json(query, JsonRequestBehavior.AllowGet);
-        }
-
-        private string GetValue(DateTime startDate, DateTime assignedDate)
-        {
-            var days = GetTimeToStart(startDate, assignedDate);
-
-            return days > 0 ? days.ToString() : "Started";
-        }
-
-        private double GetTimeToStart(DateTime startDate, DateTime assignedDate)
-        {
-            return (startDate - assignedDate).Days;
-        }
+        }        
     }
 }
